@@ -107,6 +107,8 @@ public class ArticleService {
 	 * @param article
 	 */
 	public void update(Article article) {
+		//删除缓存
+		redisTemplate.delete("article_" + article.getId());
 		articleDao.save(article);
 	}
 
@@ -115,6 +117,7 @@ public class ArticleService {
 	 * @param id
 	 */
 	public void deleteById(String id) {
+		redisTemplate.delete("article_" + id);
 		articleDao.deleteById(id);
 	}
 
