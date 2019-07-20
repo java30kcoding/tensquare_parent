@@ -1,0 +1,11 @@
+server: 
+  port: 9007
+spring: 
+  application:  
+    name: tensquare-search #指定服务名
+  data:
+    elasticsearch:
+      cluster-name: docker-cluster
+      cluster-nodes: 114.67.72.37:9300
+      repositories:
+        enabled: true
