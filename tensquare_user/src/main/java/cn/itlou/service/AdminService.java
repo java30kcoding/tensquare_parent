@@ -44,7 +44,7 @@ public class AdminService {
         if (loginName != null && bCryptPasswordEncoder.matches(admin.getPassword(), loginName.getPassword())) {
             return loginName;
         }
-        return null;
+        return loginName;
     }
 
 	/**

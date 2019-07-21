@@ -1,11 +1,11 @@
 server: 
-  port: 9001
+  port: 9010
 spring: 
   application:  
     name: tensquare-user #指定服务名
   datasource:  
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://114.67.72.37:3307/tensquare_base?characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://114.67.72.37:3307/tensquare_user?characterEncoding=utf-8&useSSL=false
     username: root
     password: Yuanyulou789!
   jpa: 
@@ -15,6 +15,10 @@ spring:
     host: 114.67.72.37
     port: 6379
     password: redis123456
+  rabbitmq:
+    host: 114.67.72.37
+    username: guest
+    password: guest
 eureka:
   client:
     service-url:

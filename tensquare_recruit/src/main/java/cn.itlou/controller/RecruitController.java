@@ -7,12 +7,7 @@ import cn.itlou.pojo.Recruit;
 import cn.itlou.service.RecruitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import entity.PageResult;
 import entity.Result;
@@ -29,80 +24,102 @@ public class RecruitController {
 
 	@Autowired
 	private RecruitService recruitService;
-	
-	
+
 	/**
-	 * 查询全部数据
+	 * 推荐职位
+	 *
 	 * @return
 	 */
-	@RequestMapping(method= RequestMethod.GET)
-	public Result findAll(){
-		return new Result(true,StatusCode.OK,"查询成功",recruitService.findAll());
-	}
-	
-	/**
-	 * 根据ID查询
-	 * @param id ID
-	 * @return
-	 */
-	@RequestMapping(value="/{id}",method= RequestMethod.GET)
-	public Result findById(@PathVariable String id){
-		return new Result(true,StatusCode.OK,"查询成功",recruitService.findById(id));
+	@GetMapping("/search/recommand")
+	public Result recommend() {
+		return new Result(true, StatusCode.OK, "查询成功", recruitService.recommend());
 	}
 
+	/**
+	 * 最新职位
+	 *
+	 * @return
+	 */
+	@GetMapping("/search/newlist")
+	public Result newList() {
+		return new Result(true, StatusCode.OK, "查询成功", recruitService.newList());
+	}
+
+	@GetMapping
+	public Result findAll() {
+		return new Result(true, StatusCode.OK, "查询成功", recruitService.findAll());
+	}
+
+	@GetMapping("/{recruitId}")
+	public Result findById(@PathVariable("recruitId") String id) {
+		return new Result(true, StatusCode.OK, "查询成功", recruitService.findById(id));
+	}
+
+	@PostMapping
+	public Result save(@RequestBody Recruit recruit) {
+		recruitService.save(recruit);
+		return new Result(true, StatusCode.OK, "添加成功");
+	}
+
+	@PutMapping("/{recruitId}")
+	public Result update(@PathVariable("recruitId") String id, @RequestBody Recruit recruit) {
+		recruit.setId(id);
+		recruitService.update(recruit);
+		return new Result(true, StatusCode.OK, "修改成功");
+	}
+
+	@DeleteMapping("/{recruitId}")
+	public Result deleteById(@PathVariable("recruitId") String id) {
+		recruitService.deleteById(id);
+		return new Result(true, StatusCode.OK, "删除成功");
+	}
 
 	/**
 	 * 分页+多条件查询
+	 *
 	 * @param searchMap 查询条件封装
-	 * @param page 页码
-	 * @param size 页大小
+	 * @param page      页码
+	 * @param size      页大小
 	 * @return 分页结果
 	 */
-	@RequestMapping(value="/search/{page}/{size}",method=RequestMethod.POST)
-	public Result findSearch(@RequestBody Map searchMap , @PathVariable int page, @PathVariable int size){
+	@RequestMapping(value = "/search/{page}/{size}", method = RequestMethod.POST)
+	public Result findSearch(@RequestBody Map searchMap, @PathVariable int page, @PathVariable int size) {
 		Page<Recruit> pageList = recruitService.findSearch(searchMap, page, size);
-		return  new Result(true,StatusCode.OK,"查询成功",  new PageResult<Recruit>(pageList.getTotalElements(), pageList.getContent()) );
+		return new Result(true, StatusCode.OK, "查询成功", new PageResult<>(pageList.getTotalElements(), pageList.getContent()));
 	}
 
 	/**
-     * 根据条件查询
-     * @param searchMap
-     * @return
-     */
-    @RequestMapping(value="/search",method = RequestMethod.POST)
-    public Result findSearch( @RequestBody Map searchMap){
-        return new Result(true,StatusCode.OK,"查询成功",recruitService.findSearch(searchMap));
-    }
-	
-	/**
-	 * 增加
-	 * @param recruit
+	 * 根据条件查询
+	 *
+	 * @param searchMap
+	 * @return
 	 */
-	@RequestMapping(method=RequestMethod.POST)
-	public Result add(@RequestBody Recruit recruit  ){
-		recruitService.add(recruit);
-		return new Result(true,StatusCode.OK,"增加成功");
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public Result findSearch(@RequestBody Map searchMap) {
+		return new Result(true, StatusCode.OK, "查询成功", recruitService.findSearch(searchMap));
 	}
-	
+
 	/**
 	 * 修改
+	 *
 	 * @param recruit
 	 */
-	@RequestMapping(value="/{id}",method= RequestMethod.PUT)
-	public Result update(@RequestBody Recruit recruit, @PathVariable String id ){
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public Result update(@RequestBody Recruit recruit, @PathVariable String id) {
 		recruit.setId(id);
-		recruitService.update(recruit);		
-		return new Result(true,StatusCode.OK,"修改成功");
+		recruitService.update(recruit);
+		return new Result(true, StatusCode.OK, "修改成功");
 	}
-	
+
 	/**
 	 * 删除
+	 *
 	 * @param id
 	 */
-	@RequestMapping(value="/{id}",method= RequestMethod.DELETE)
-	public Result delete(@PathVariable String id ){
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public Result delete(@PathVariable String id) {
 		recruitService.deleteById(id);
-		return new Result(true,StatusCode.OK,"删除成功");
+		return new Result(true, StatusCode.OK, "删除成功");
 	}
 	
 }

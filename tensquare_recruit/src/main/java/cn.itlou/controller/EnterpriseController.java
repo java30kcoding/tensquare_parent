@@ -27,28 +27,35 @@ public class EnterpriseController {
 	@Autowired
 	private EnterpriseService enterpriseService;
 
-	@Autowired
-	private RecruitService recruitService;
-	
-	/**
-	 * 查询全部数据
-	 * @return
-	 */
-	@RequestMapping(method= RequestMethod.GET)
-	public Result findAll(){
-		return new Result(true,StatusCode.OK,"查询成功",enterpriseService.findAll());
-	}
-	
-	/**
-	 * 根据ID查询
-	 * @param id ID
-	 * @return
-	 */
-	@RequestMapping(value="/{id}",method= RequestMethod.GET)
-	public Result findById(@PathVariable String id){
-		return new Result(true,StatusCode.OK,"查询成功",enterpriseService.findById(id));
+
+	@GetMapping("/search/hotlist")
+	public Result hotList() {
+		List<Enterprise> enterprises = enterpriseService.hotList("1");
+		return new Result(true, StatusCode.OK, "查询成功", enterprises);
 	}
 
+	@GetMapping
+	public Result findAll() {
+		return new Result(true, StatusCode.OK, "查询成功", enterpriseService.findAll());
+	}
+
+	@GetMapping("/{enterpriseId}")
+	public Result findById(@PathVariable("enterpriseId") String id) {
+		return new Result(true, StatusCode.OK, "查询成功", enterpriseService.findById(id));
+	}
+
+	@PutMapping("/{enterpriseId}")
+	public Result update(@PathVariable("enterpriseId") String id, @RequestBody Enterprise enterprise) {
+		enterprise.setId(id);
+		enterpriseService.update(enterprise);
+		return new Result(true, StatusCode.OK, "修改成功");
+	}
+
+	@DeleteMapping("/{enterpriseId}")
+	public Result deleteById(@PathVariable("enterpriseId") String id) {
+		enterpriseService.deleteById(id);
+		return new Result(true, StatusCode.OK, "删除成功");
+	}
 
 	/**
 	 * 分页+多条件查询
@@ -64,15 +71,15 @@ public class EnterpriseController {
 	}
 
 	/**
-     * 根据条件查询
-     * @param searchMap
-     * @return
-     */
-    @RequestMapping(value="/search",method = RequestMethod.POST)
-    public Result findSearch( @RequestBody Map searchMap){
-        return new Result(true,StatusCode.OK,"查询成功",enterpriseService.findSearch(searchMap));
-    }
-	
+	 * 根据条件查询
+	 * @param searchMap
+	 * @return
+	 */
+	@RequestMapping(value="/search",method = RequestMethod.POST)
+	public Result findSearch( @RequestBody Map searchMap){
+		return new Result(true,StatusCode.OK,"查询成功",enterpriseService.findSearch(searchMap));
+	}
+
 	/**
 	 * 增加
 	 * @param enterprise
@@ -82,7 +89,7 @@ public class EnterpriseController {
 		enterpriseService.add(enterprise);
 		return new Result(true,StatusCode.OK,"增加成功");
 	}
-	
+
 	/**
 	 * 修改
 	 * @param enterprise
@@ -90,10 +97,10 @@ public class EnterpriseController {
 	@RequestMapping(value="/{id}",method= RequestMethod.PUT)
 	public Result update(@RequestBody Enterprise enterprise, @PathVariable String id ){
 		enterprise.setId(id);
-		enterpriseService.update(enterprise);		
+		enterpriseService.update(enterprise);
 		return new Result(true,StatusCode.OK,"修改成功");
 	}
-	
+
 	/**
 	 * 删除
 	 * @param id
@@ -102,24 +109,6 @@ public class EnterpriseController {
 	public Result delete(@PathVariable String id ){
 		enterpriseService.deleteById(id);
 		return new Result(true,StatusCode.OK,"删除成功");
-	}
-
-	@GetMapping(value = "/search/hotlist")
-	public Result hotList(){
-		List<Enterprise> enterprises = enterpriseService.hotList("1");
-		return new Result(true,StatusCode.OK,"查询成功", enterprises);
-	}
-
-	@GetMapping(value = "/search/recommend")
-	public Result recommend(){
-		List<Recruit> enterprises = recruitService.recommend();
-		return new Result(true,StatusCode.OK,"查询成功", enterprises);
-	}
-
-	@GetMapping(value = "/search/newlist")
-	public Result newlist(){
-		List<Recruit> enterprises = recruitService.newlist();
-		return new Result(true,StatusCode.OK,"查询成功", enterprises);
 	}
 	
 }

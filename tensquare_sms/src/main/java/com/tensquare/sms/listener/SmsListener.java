@@ -22,11 +22,11 @@ public class SmsListener {
     @RabbitHandler
     public void executeSms(Map<String, String> map) {
         String mobile = map.get("mobile");
-        String checkCode = map.get("check_code");
+        String checkCode = map.get("checkcode");
         log.info("手机号： {}" + mobile);
         log.info("验证码： {}" + checkCode);
         try {
-            smsUtil.sendSms(mobile, "SMS_158440564", "金鑫自己测试学习用的签名", "{\"code\": \"" + checkCode + "\"}");
+            smsUtil.sendSms(mobile, "SMS_171117464", "十次方", "{\"checkcode\": \"" + checkCode + "\"}");
         } catch (ClientException e) {
             e.printStackTrace();
         }

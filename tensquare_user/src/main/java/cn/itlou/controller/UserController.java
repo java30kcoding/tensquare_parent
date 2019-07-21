@@ -5,6 +5,7 @@ import cn.itlou.service.UserService;
 import entity.PageResult;
 import entity.Result;
 import entity.StatusCode;
+import io.jsonwebtoken.Claims;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.domain.Page;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import util.JwtUtil;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +38,9 @@ public class UserController {
 	@Resource
 	private JwtUtil jwtUtil;
 
+	@Resource
+	private HttpServletRequest request;
+
     /**
      * 更新被关注好友粉丝数跟用户自己的关注数
      * @param userId
@@ -48,21 +53,23 @@ public class UserController {
 
 	/**
 	 * 用户登录
-	 * @param user
+	 * @param loginMap
 	 * @return
 	 */
 	@PostMapping("/login")
-	public Result login(@RequestBody User user) {
-		user = userService.login(user.getMobile(), user.getPassword());
-		if (user == null) {
-			return new Result(false, StatusCode.LOGINERROR, "登录失败");
+	public Result login(@RequestBody Map<String,String> loginMap) {
+		User user = userService.findByMobileAndPassword(loginMap.get("mobile"), loginMap.get("password"));
+		if(user!=null){
+			//签发token
+			String token = jwtUtil.createJWT(user.getId(), user.getNickname(), "user");
+			Map map=new HashMap();
+			map.put("token",token);
+			map.put("name",user.getNickname());
+			map.put("avatar",user.getAvatar());
+			return new Result(true,StatusCode.OK,"登陆成功",map);
+		}else{
+			return new Result(false,StatusCode.LOGINERROR,"用户名或密码错误");
 		}
-		// 登录成功后的操作
-		String token = jwtUtil.createJWT(user.getId(), user.getMobile(), "user");
-		Map<String, Object> map = new HashMap<>();
-		map.put("token", token);
-		map.put("roles", "user");
-		return new Result(true, StatusCode.OK, "登录成功", map);
 	}
 
     /**
@@ -106,6 +113,9 @@ public class UserController {
 	 */
 	@RequestMapping(value="/{id}", method= RequestMethod.GET)
 	public Result findById(@PathVariable String id){
+		if (id.equals("info")){
+			id = "1";
+		}
 		return new Result(true, StatusCode.OK, "查询成功", userService.findById(id));
 	}
 
@@ -160,8 +170,13 @@ public class UserController {
 	 */
 	@RequestMapping(value="/{id}", method= RequestMethod.DELETE)
 	public Result delete(@PathVariable String id ){
+		//删除用户必须有管理员权限
+		Claims claims = (Claims) request.getAttribute("admin_claims");
+		if (claims==null) {
+			return new Result(true,StatusCode.ACCESSERROR,"无权访问");
+		}
 		userService.deleteById(id);
-		return new Result(true, StatusCode.OK, "删除成功");
+		return new Result(true,StatusCode.OK,"删除成功");
 	}
 	
 }

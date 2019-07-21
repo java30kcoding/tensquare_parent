@@ -76,7 +76,7 @@ public class UserService {
         if (user != null && bCryptPasswordEncoder.matches(password, user.getPassword())) {
             return user;
         }
-        return null;
+        return user;
     }
     /**
      * 发送短信
@@ -87,11 +87,11 @@ public class UserService {
         // 生成6位随机验证码
         String checkCode = RandomStringUtils.randomNumeric(6);
         // 向缓存中放一份，设置过期时间为6小时
-        redisTemplate.opsForValue().set("check_code_" + mobile, checkCode, 6, TimeUnit.HOURS);
+        redisTemplate.opsForValue().set("checkcode_" + mobile, checkCode, 6, TimeUnit.HOURS);
         // 给用户发一份
         Map<String, String> map = new HashMap<>();
         map.put("mobile", mobile);
-        map.put("check_code", checkCode);
+        map.put("checkcode", checkCode);
         rabbitTemplate.convertAndSend("sms", map);
         // 在控制台打印一份
         log.info("验证码为： {}" + checkCode);
@@ -235,5 +235,24 @@ public class UserService {
                 return cb.and(predicateList.toArray(new Predicate[predicateList.size()]));
             }
         };
+    }
+
+    /**
+     * 根据手机号和密码查询用户
+     * @param mobile
+     * @param password
+     * @return
+     */
+    public User findByMobileAndPassword(String mobile,String password){
+        User user = userDao.findByMobile(mobile);
+        if(user==null){
+            return null;
+        }
+        if(bCryptPasswordEncoder.matches(password,user.getPassword()) ){
+            return user;
+        }else{
+            return user;
+        }
+
     }
 }

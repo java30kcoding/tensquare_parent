@@ -10,6 +10,7 @@ spring:
 
 aliyun:
   sms:
-    accessKeyId: LTAIpGYhPa6tmvUO
-    accessKeySecret: tTUTTAqzIZx0xfaICzSzZzoKZT1dM0
+    accessKeyId: LTAIMrOILBHewUsN
+    accessKeySecret: zsimTScKpLolUYMgCFn63oxTaB4lQG
+
 

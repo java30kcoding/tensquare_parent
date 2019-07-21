@@ -15,3 +15,9 @@ spring:
     host: 114.67.72.37
     port: 6379
     password: redis123456
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:6868/eureka
+  instance:
+    prefer-ip-address: true

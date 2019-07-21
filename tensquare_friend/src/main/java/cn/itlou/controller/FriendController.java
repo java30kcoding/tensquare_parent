@@ -1,7 +1,7 @@
 package cn.itlou.controller;
 
-import com.tensquare.friend.client.UserClient;
-import com.tensquare.friend.service.FriendService;
+import cn.itlou.client.UserClient;
+import cn.itlou.service.FriendService;
 import entity.Result;
 import entity.StatusCode;
 import io.jsonwebtoken.Claims;
@@ -34,7 +34,7 @@ public class FriendController {
         Claims claims_user = (Claims) request.getAttribute("claims_user");
         if (null == claims_user) {
             // 说明当前用户没有user角色
-            return new Result(false, StatusCode.LOGINERROR.getCode(), "权限不足");
+            return new Result(false, StatusCode.LOGINERROR, "权限不足");
         }
         // 判断是添加好友还是添加不喜欢的人
         if (type != null) {
@@ -55,16 +55,16 @@ public class FriendController {
                 flag = service.addNoFriend(userId, friendId);
                 message = "不能重复添加非好友";
             } else {
-                return new Result(false, StatusCode.ERROR.getCode(), "参数异常");
+                return new Result(false, StatusCode.ERROR, "参数异常");
             }
             // 对flag进行判断
             if (flag == 0) {
-                return new Result(false, StatusCode.ERROR.getCode(), message);
+                return new Result(false, StatusCode.ERROR, message);
             } else if (flag == 1) {
-                return new Result(true, StatusCode.OK.getCode(), "添加成功");
+                return new Result(true, StatusCode.OK, "添加成功");
             }
         } else {
-            return new Result(false, StatusCode.ERROR.getCode(), "参数异常");
+            return new Result(false, StatusCode.ERROR, "参数异常");
         }
         return null;
     }
@@ -80,13 +80,13 @@ public class FriendController {
         Claims claims_user = (Claims) request.getAttribute("claims_user");
         if (null == claims_user) {
             // 说明当前用户没有user角色
-            return new Result(false, StatusCode.LOGINERROR.getCode(), "权限不足");
+            return new Result(false, StatusCode.LOGINERROR, "权限不足");
         }
         // 得到当前登录的用户id
         String userId = claims_user.getId();
         service.deleteFriend(userId, friendId);
         // 更新粉丝数跟关注数
         userClient.updateFansAndFollower(userId, friendId, -1);
-        return new Result(true, StatusCode.OK.getCode(), "删除成功");
+        return new Result(true, StatusCode.OK, "删除成功");
     }
 }
