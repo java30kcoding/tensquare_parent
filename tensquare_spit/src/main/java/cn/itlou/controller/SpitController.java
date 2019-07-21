@@ -60,4 +60,10 @@ public class SpitController {
         redisTemplate.opsForValue().set("thumbup_spit_" + userid, 1);
         return new Result(true, StatusCode.OK, "点赞成功");
     }
+
+    @RequestMapping(value="/{page}/{size}",method=RequestMethod.POST)
+    public Result getPage(@PathVariable int page, @PathVariable int size){
+
+        return new Result(true, StatusCode.OK, "查询成功");
+    }
 }

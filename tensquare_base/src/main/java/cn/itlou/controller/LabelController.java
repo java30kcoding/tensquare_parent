@@ -61,4 +61,15 @@ public class LabelController {
         return new Result(true, StatusCode.OK, "查询成功", new PageResult<>(pageLabel.getTotalElements(), pageLabel.getContent()));
     }
 
+    @GetMapping(value = "/toplist/{page}/{size}")
+    public Result toplist(@PathVariable int page, @PathVariable int size){
+        Page<Label> hotlist = labelService.toplist(page, size);
+        return new Result(true,StatusCode.OK,"查询成功", new PageResult<Label>(hotlist.getTotalElements(), hotlist.getContent()));
+    }
+
+    @GetMapping(value = "/toplist")
+    public Result toplist1(){
+        return new Result(true,StatusCode.OK,"查询成功", labelService.findAll());
+    }
+
 }

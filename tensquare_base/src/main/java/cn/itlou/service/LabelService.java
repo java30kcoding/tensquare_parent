@@ -88,4 +88,9 @@ public class LabelService {
         }, pageable);
     }
 
+    public Page<Label> toplist(int page, int rows){
+        Pageable pageable = PageRequest.of(page -1, rows);
+        return labelDao.toplist(pageable);
+    }
+
 }

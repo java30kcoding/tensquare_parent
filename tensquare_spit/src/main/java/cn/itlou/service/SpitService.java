@@ -2,7 +2,12 @@ package cn.itlou.service;
 
 import cn.itlou.dao.SpitDao;
 import cn.itlou.pojo.Spit;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Predicate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -14,6 +19,7 @@ import util.IdWorker;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -64,5 +70,11 @@ public class SpitService {
         Update update = new Update();
         update.inc("thumbup", 1);
         mongoTemplate.updateFirst(query, update, "spit");
+    }
+
+    public Page<Spit> getPage(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        List<Predicate> predicateList = Lists.newArrayList();
+        return null;
     }
 }
